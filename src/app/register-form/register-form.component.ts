@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,Pipe } from '@angular/core';
 import {FormControl, Validators, FormsModule, FormBuilder, ReactiveFormsModule, FormGroup} from '@angular/forms';
+import { RegisterService } from '../services/register.service';
+import {Register} from '../models/register';
 @Component({
   selector: 'app-register-form',
   templateUrl: './register-form.component.html',
@@ -10,13 +12,17 @@ export class RegisterFormComponent implements OnInit {
   button = {'register':'Register'};
   response = {'msg':'','type':'default'};
   
+  loading:boolean;
+  
   registerForm: FormGroup;
   firstName: FormControl;
   lastName: FormControl;
   email: FormControl;
   password: FormControl;
 
-  constructor() { }
+  constructor(private registerService: RegisterService) { 
+    this.loading = false;
+  }
 
   ngOnInit() {
     this.createFormControls();
@@ -66,7 +72,29 @@ export class RegisterFormComponent implements OnInit {
    */
   onSubmit(){
     if(this.registerForm.valid){
-      console.log(this.registerForm.value);
+      let registeringData:Register = new Register(
+        this.registerForm.value.name.firstName+this.registerForm.value.name.lastName,
+        this.registerForm.value.email,
+        this.registerForm.value.password
+      );
+
+      //show loading sign
+      this.loading = true;
+      //send data to the back end
+      this.registerService.register(registeringData)
+      .then(
+        ()=>{
+          console.log(this.registerService.results);
+          this.loading = false;
+        },
+        err=>{
+          this.loading = false;
+          this.registerService.results = err.json();
+          console.log(err.json());
+        });
+    }
+    else{
+      
     }
   }
 

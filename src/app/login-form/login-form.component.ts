@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {FormsModule,ReactiveFormsModule,FormGroup,FormControl,FormBuilder,Validators} from '@angular/forms';
+import { LoginService } from '../services/login.service';
+import { Login } from '../models/login';
 @Component({
   selector: 'app-login-form',
   templateUrl: './login-form.component.html',
@@ -9,13 +11,13 @@ export class LoginFormComponent implements OnInit {
   title:string = 'Login';
   button = {'login':'Login'};
   response = {'msg':'','type':'default'};
-
+  loading:boolean;
   loginForm: FormGroup;
   email:FormControl;
   password:FormControl;
 
-  constructor() {
-    
+  constructor(private loginService:LoginService) {
+    this.loading = false;
   }
 
   ngOnInit() {
@@ -47,7 +49,19 @@ export class LoginFormComponent implements OnInit {
 
   onSubmit(){
     if(this.loginForm.valid){
+      let credentials = new Login(this.loginForm.value.email,this.loginForm.value.password);
+      this.loading = true;
       console.log(this.loginForm.value);
+      console.log(new Login(this.loginForm.value.email,this.loginForm.value.password));
+      this.loginService.login(credentials)
+      .then(()=>{
+        this.loading = false;
+      },err=>{
+        this.loading = false;
+        this.loginService.results = err.json();
+        console.log(err);
+      })
+      .catch(err=>{this.loading = false;console.log(err);});
     }
   }
 

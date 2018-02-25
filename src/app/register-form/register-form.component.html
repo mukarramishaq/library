@@ -1,58 +1,78 @@
-<form novalidate [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-  <fieldset formGroupName="name">
-    <div class="form-group" [ngClass]="{
-        'has-danger':firstName.invalid && (firstName.dirty || firstName.touched),
-        'has-success': firstName.valid && (firstName.dirty || firstName.touched)
-      }">
-      <label>First Name</label>
-      <input type="text" class="form-control" formControlName="firstName" required>
-      <div class="form-control-feedback"
-        *ngIf="firstName.errors && (firstName.dirty || firstName.touched)">
-        <p *ngIf="fistName.errors.required">First Name is required</p>
-      </div>
-    </div>
 
-    <div class="form-group" [ngClass]="{
-        'has-danger':lastName.invalid && (lastName.dirty || lastName.touched),
-        'has-success': lastName.valid && (lastName.dirty || lastName.touched)
-      }">
-      <label>Last Name</label>
-      <input type="text" class="form-control" formControlName="lastName" required>
-      <div class="form-control-feedback"
-        *ngIf="lastName.errors && (lastName.dirty || lastName.touched)">
-        <p *ngIf="lastName.errors.required">Last Name is required</p>
-      </div>
-    </div>
-
-  </fieldset>
+<div class="card" style="width:20rem; margin-top:20%;">
   
-  <div class="form-group" [ngClass]="{
-    'has-danger':email.invalid && (email.dirty || email.touched),
-    'has-success': email.valid && (email.dirty || email.touched)
+  <div class="card-header text-center bg-success text-light">
+    <h4 class="card-title">Sign Up</h4>
+    <div class="col-md-12 badge" *ngIf="registerService.results" [ngClass]="{
+      'badge-danger':(!registerService.results.success && (registerService.results.msg))||registerService.results.errors,
+      'badge-success':registerService.results.success  && (registerService.results.msg),
+      '':''
     }">
-    <label>Email</label>
-    <input type="email" class="form-control" formControlName="email" required>
-    <div class="form-control-feedback"
-      *ngIf="email.errors && (email.dirty || email.touched)">
-      <p *ngIf="email.errors.required">Email is required</p>
-      <p *ngIf="email.errors.email">Invalid email</p>
+        <p>{{registerService.results.msg?registerService.results.msg:''}}</p>
+        <p>{{registerService.results.errors && registerService.results.errors.email ?registerService.results.errors.email[0]:''}}</p>
+        <p>{{registerService.results.errors && registerService.results.errors.password ?registerService.results.errors.password[0]:''}}</p>
+        
     </div>
   </div>
-
-  <div class="form-group" [ngClass]="{
-    'has-danger':password.invalid && (password.dirty || password.touched),
-    'has-success': password.valid && (password.dirty || password.touched)
-    }">
-    <label>Password</label>
-    <input type="password" class="form-control" formControlName="password" required>
-    <div class="form-control-feedback"
-      *ngIf="password.errors && (password.dirty || password.touched)">
-      <p *ngIf="password.errors.required">Password is required</p>
-      <p *ngIf="password.errors.minLength">Password should be atleast of {{password.errors.minLength}} characters long.</p>
-    </div>
+  <div class="card-block">
+    <form novalidate [formGroup]="registerForm" class="col-md-12">
+      <fieldset formGroupName="name">
+        <div class="form-group" [ngClass]="{
+            'has-danger':firstName.invalid && (firstName.dirty || firstName.touched),
+            'has-success': firstName.valid && (firstName.dirty || firstName.touched)
+          }">
+          <label>First Name</label>
+          <input type="text" class="form-control" formControlName="firstName" required>
+          <div class="form-control-feedback"
+            *ngIf="firstName.errors && (firstName.dirty || firstName.touched)">
+            <p *ngIf="fistName.errors.required" class="badge badge-danger">First Name is required</p>
+          </div>
+        </div>
+    
+        <div class="form-group" [ngClass]="{
+            'has-danger':lastName.invalid && (lastName.dirty || lastName.touched),
+            'has-success': lastName.valid && (lastName.dirty || lastName.touched)
+          }">
+          <label>Last Name</label>
+          <input type="text" class="form-control" formControlName="lastName" required>
+          <div class="form-control-feedback"
+            *ngIf="lastName.errors && (lastName.dirty || lastName.touched)">
+            <p *ngIf="lastName.errors.required" class="badge badge-danger">Last Name is required</p>
+          </div>
+        </div>
+    
+      </fieldset>
+      
+      <div class="form-group" [ngClass]="{
+        'has-danger':email.invalid && (email.dirty || email.touched),
+        'has-success': email.valid && (email.dirty || email.touched)
+        }">
+        <label>Email</label>
+        <input type="email" class="form-control" formControlName="email" required>
+        <div class="form-control-feedback"
+          *ngIf="email.errors && (email.dirty || email.touched)">
+          <p *ngIf="email.errors.required" class="badge badge-danger">Email is required</p>
+          <p *ngIf="email.errors.email" class="badge badge-danger">Invalid email</p>
+        </div>
+      </div>
+    
+      <div class="form-group" [ngClass]="{
+        'has-danger':password.invalid && (password.dirty || password.touched),
+        'has-success': password.valid && (password.dirty || password.touched)
+        }">
+        <label>Password</label>
+        <input type="password" class="form-control" formControlName="password" required>
+        <div class="form-control-feedback"
+          *ngIf="password.errors && (password.dirty || password.touched)">
+          <p *ngIf="password.errors.required" class="badge badge-danger">Password is required</p>
+          <p *ngIf="password.errors.minlength" class="badge badge-danger">Password should be atleast of 8 characters long.</p>
+        </div>
+      </div>
+    </form>
   </div>
-
-  <button type="submit" class="btn btn-success">
-    {{button.register}}
-  </button>
-</form>
+  <div class="card-footer col-md-12">
+    <button type="button" [disabled]="registerForm.invalid" (click)="registerForm.valid?onSubmit():''" class="btn btn-success col-md-12">
+      {{loading ? 'processing...' : button.register}}
+    </button>
+  </div>
+</div>
